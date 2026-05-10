@@ -98,19 +98,19 @@ const getRandomValue = () => (Math.random() < 0.9 ? 2 : 4);
 
 const getTileColor = (value: number) => {
   const colors: Record<number, string> = {
-    2: 'bg-emerald-100 text-emerald-900',
-    4: 'bg-emerald-200 text-emerald-900',
-    8: 'bg-orange-200 text-orange-900',
-    16: 'bg-orange-300 text-white',
-    32: 'bg-orange-400 text-white',
-    64: 'bg-orange-500 text-white',
-    128: 'bg-amber-400 text-white shadow-lg',
-    256: 'bg-amber-500 text-white shadow-lg',
-    512: 'bg-amber-600 text-white shadow-lg',
-    1024: 'bg-amber-700 text-white shadow-xl',
-    2048: 'bg-indigo-600 text-white shadow-xl ring-4 ring-indigo-300 animate-pulse',
+    2: 'bg-slate-800 text-slate-300 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]',
+    4: 'bg-slate-700 text-slate-200 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]',
+    8: 'bg-indigo-900/80 text-indigo-100 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)] border border-indigo-700/50',
+    16: 'bg-indigo-800 text-white shadow-[0_0_15px_rgba(79,70,229,0.2)] border border-indigo-600/50',
+    32: 'bg-violet-700 text-white shadow-[0_0_20px_rgba(124,58,237,0.3)] border border-violet-500/50',
+    64: 'bg-violet-600 text-white shadow-[0_0_25px_rgba(139,92,246,0.4)] border border-violet-400/50',
+    128: 'bg-fuchsia-600 text-white shadow-[0_0_30px_rgba(192,38,211,0.5)] border border-fuchsia-400/50 text-4xl sm:text-5xl',
+    256: 'bg-fuchsia-500 text-white shadow-[0_0_35px_rgba(217,70,239,0.6)] border border-fuchsia-300/50 text-4xl sm:text-5xl',
+    512: 'bg-pink-600 text-white shadow-[0_0_40px_rgba(219,39,119,0.7)] border border-pink-400/50 text-4xl sm:text-5xl',
+    1024: 'bg-rose-500 text-white shadow-[0_0_45px_rgba(244,63,94,0.8)] border border-rose-400/50 text-3xl sm:text-4xl',
+    2048: 'bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white shadow-[0_0_60px_rgba(168,85,247,0.8)] border border-white/30 text-3xl sm:text-4xl animate-pulse',
   };
-  return colors[value] || 'bg-slate-800 text-white';
+  return colors[value] || 'bg-slate-900 text-white border border-white/10 shadow-[0_0_30px_rgba(255,255,255,0.2)]';
 };
 
 export default function App() {
@@ -128,7 +128,6 @@ export default function App() {
     let newGrid = createEmptyGrid();
     let idCounter = 0;
     
-    // Add two random tiles
     for (let i = 0; i < 2; i++) {
       const emptyPos = getEmptyPositions(newGrid);
       if (emptyPos.length > 0) {
@@ -147,7 +146,6 @@ export default function App() {
     initGame();
     const savedBest = localStorage.getItem('2048_best_score');
     if (savedBest) setBestScore(parseInt(savedBest));
-    
     const savedMuted = localStorage.getItem('2048_muted');
     if (savedMuted) setIsMuted(savedMuted === 'true');
   }, [initGame]);
@@ -175,27 +173,19 @@ export default function App() {
   };
 
   const checkGameStatus = (currentGrid: Grid) => {
-    // Check for 2048 tile
     for (let r = 0; r < GRID_SIZE; r++) {
       for (let c = 0; c < GRID_SIZE; c++) {
         if (currentGrid[r][c]?.value === WINNING_SCORE) return 'WON';
       }
     }
-
-    // Check if any empty cell exists
     if (getEmptyPositions(currentGrid).length > 0) return 'PLAYING';
-
-    // Check if any merges are possible
     for (let r = 0; r < GRID_SIZE; r++) {
       for (let c = 0; c < GRID_SIZE; c++) {
         const val = currentGrid[r][c]!.value;
-        // Check right
         if (c < GRID_SIZE - 1 && currentGrid[r][c + 1]?.value === val) return 'PLAYING';
-        // Check down
         if (r < GRID_SIZE - 1 && currentGrid[r + 1][c]?.value === val) return 'PLAYING';
       }
     }
-
     return 'LOST';
   };
 
@@ -234,8 +224,6 @@ export default function App() {
 
     const vector = getVector(direction);
     const cells = traverseOrder(direction);
-    
-    // To prevent multiple merges in one move
     const mergedPositions = new Set<string>();
 
     cells.forEach(([r, c]) => {
@@ -247,7 +235,6 @@ export default function App() {
       let nextR = currR + vector[0];
       let nextC = currC + vector[1];
 
-      // Move as far as possible
       while (
         nextR >= 0 && nextR < GRID_SIZE &&
         nextC >= 0 && nextC < GRID_SIZE &&
@@ -259,7 +246,6 @@ export default function App() {
         nextC += vector[1];
       }
 
-      // Check for merge
       if (
         nextR >= 0 && nextR < GRID_SIZE &&
         nextC >= 0 && nextC < GRID_SIZE &&
@@ -282,7 +268,6 @@ export default function App() {
         moved = true;
         merged = true;
       } else if (currR !== r || currC !== c) {
-        // Just move
         newGrid[currR][currC] = { ...tile, position: [currR, currC] };
         newGrid[r][c] = null;
         moved = true;
@@ -290,11 +275,9 @@ export default function App() {
     });
 
     if (moved) {
-      if (merged) {
-        playSound('merge', isMuted, earnedScore);
-      } else {
-        playSound('move', isMuted);
-      }
+      if (merged) playSound('merge', isMuted, earnedScore);
+      else playSound('move', isMuted);
+      
       const { grid: finalGrid, id: finalId } = addRandomTile(newGrid, currentIdCounter);
       setGrid(finalGrid);
       setNextId(finalId);
@@ -310,7 +293,6 @@ export default function App() {
 
   const currentGridCopy = (g: Grid): Grid => g.map(row => [...row]);
 
-  // Event Handlers
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowUp' || e.key === 'w') move('UP');
@@ -341,104 +323,87 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4 sm:p-8 font-sans text-slate-900 select-none overflow-hidden safe-area-inset gap-6 sm:gap-8 relative">
+    <div className="min-h-screen bg-slate-950 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black text-slate-100 flex flex-col landscape:flex-row items-center justify-center p-4 sm:p-8 font-sans select-none overflow-hidden safe-area-inset gap-8 sm:gap-16 relative w-full">
       
-      {/* 1. Header & Controls: Standard Vertical Stack (Hidden in Mobile Landscape) */}
-      <div className="w-full max-w-2xl flex flex-col gap-4 sm:gap-6 landscape:max-sm:hidden">
-        <div className="flex justify-between items-end gap-4">
-          <div>
-            <h1 className="text-5xl sm:text-7xl font-black text-emerald-600 tracking-tighter leading-none">2048</h1>
-            <p className="text-slate-500 font-semibold mt-1 sm:text-lg">For fun!</p>
+      {/* 1. Header & Controls: Responsive Layout */}
+      <div className="w-full max-w-[500px] landscape:max-w-[300px] flex flex-col gap-6 sm:gap-8 z-10 shrink-0">
+        <div className="flex justify-between items-center landscape:items-start landscape:flex-col gap-4 sm:gap-6">
+          <div className="text-center landscape:text-left">
+            <h1 className="text-5xl sm:text-7xl landscape:text-6xl font-black bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 tracking-tighter leading-none filter drop-shadow-[0_0_15px_rgba(168,85,247,0.4)]">
+              2048
+            </h1>
+            <p className="text-slate-400 font-semibold mt-2 sm:text-lg tracking-wide uppercase text-sm">Neon Edition</p>
           </div>
-          <div className="flex flex-col items-end gap-2">
-            <div className="flex gap-2 sm:gap-4">
-              <div className="bg-white border border-slate-200 px-4 py-2 rounded-2xl text-center min-w-[100px] shadow-sm">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Score</p>
-                <p className="text-xl sm:text-2xl font-black">{score}</p>
-              </div>
-              <div className="bg-white border border-slate-200 px-4 py-2 rounded-2xl text-center min-w-[100px] shadow-sm">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Best</p>
-                <p className="text-xl sm:text-2xl font-black">{bestScore}</p>
-              </div>
+          
+          <div className="flex landscape:w-full gap-3 sm:gap-4">
+            <div className="flex-1 bg-slate-900/80 border border-white/10 px-4 py-3 rounded-2xl text-center shadow-lg backdrop-blur-sm relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent"></div>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-300 mb-1">Score</p>
+              <p className="text-xl sm:text-3xl font-black tabular-nums text-white">{score}</p>
+            </div>
+            <div className="flex-1 bg-slate-900/80 border border-white/10 px-4 py-3 rounded-2xl text-center shadow-lg backdrop-blur-sm relative overflow-hidden">
+               <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent"></div>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-pink-300 mb-1">Best</p>
+              <p className="text-xl sm:text-3xl font-black tabular-nums text-white">{bestScore}</p>
             </div>
           </div>
         </div>
 
-        <div className="flex justify-between items-center bg-white p-3 rounded-2xl shadow-sm border border-slate-100">
-           <div className="flex gap-2">
+        <div className="flex justify-between items-center bg-slate-900/50 p-3 sm:p-4 rounded-2xl shadow-xl border border-white/5 backdrop-blur-md">
+           <div className="flex gap-3">
             <button 
               onClick={initGame}
-              className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-xl font-bold transition-all shadow-md active:scale-95"
+              className="flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(99,102,241,0.4)] hover:shadow-[0_0_25px_rgba(99,102,241,0.6)] active:scale-95"
             >
               <RefreshCw size={20} />
-              Reset
+              <span className="hidden sm:inline landscape:inline">Reset</span>
             </button>
             <button 
               onClick={() => setIsMuted(!isMuted)}
-              className="p-2 sm:px-4 flex items-center justify-center rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors text-slate-500"
+              className="p-3 flex items-center justify-center rounded-xl bg-slate-800 border border-white/10 hover:bg-slate-700 transition-colors text-slate-300 shadow-md active:scale-95"
               title={isMuted ? "Unmute" : "Mute"}
             >
               {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
             </button>
            </div>
-          <div className="flex gap-4 pr-4">
-             <div className="flex items-center gap-2 text-slate-400">
-               <div className="flex gap-1">
-                 <ArrowUp size={16} /> <ArrowDown size={16} /> <ArrowLeft size={16} /> <ArrowRight size={16} />
-               </div>
-               <span className="text-xs font-bold uppercase tracking-tighter hidden sm:inline text-slate-500">Arrows / Swipe</span>
+          
+           {/* Instructions (Hidden on very small screens, visible on desktop/landscape) */}
+           <div className="flex items-center gap-2 text-slate-500 px-2">
+             <div className="flex gap-1">
+               <ArrowUp size={16} /> <ArrowDown size={16} /> <ArrowLeft size={16} /> <ArrowRight size={16} />
              </div>
-          </div>
+           </div>
+        </div>
+        
+        <div className="hidden landscape:block text-slate-500 mt-4">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] mb-2 text-slate-600">How to Play</p>
+          <p className="text-sm font-medium">
+            Use <span className="text-indigo-400 font-bold">arrow keys</span> or <span className="text-pink-400 font-bold">swipe</span> to move tiles. Tiles with the same number merge into one when they touch.
+          </p>
         </div>
       </div>
 
-      {/* 2. Mobile Landscape Sidebar (Absolute) */}
-      <div className="hidden landscape:max-sm:flex flex-col justify-between absolute left-6 h-full py-8 w-1/4 z-10">
-        <div className="flex flex-col gap-4">
-          <h1 className="text-4xl font-black text-emerald-600 tracking-tighter leading-none">2048</h1>
-          <div className="bg-white border border-slate-200 p-2 rounded-xl text-center shadow-sm">
-            <p className="text-[8px] font-bold uppercase tracking-widest text-slate-400">Score</p>
-            <p className="text-2xl font-black">{score}</p>
-          </div>
-          <div className="flex gap-2">
-            <button 
-              onClick={initGame}
-              className="flex-1 bg-emerald-600 text-white p-3 rounded-lg font-bold shadow-md active:scale-95"
-            >
-              <RefreshCw size={20} className="mx-auto" />
-            </button>
-            <button 
-              onClick={() => setIsMuted(!isMuted)}
-              className="p-3 bg-white border border-slate-200 rounded-lg text-slate-500"
-            >
-              {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
-            </button>
-          </div>
-        </div>
-        <div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">How to Play</p>
-          <p className="text-slate-500 font-medium text-[10px]">Swipe to move tiles.</p>
-        </div>
-      </div>
-
-      {/* 3. Game Board: Responsive Sizing */}
-      <div className="w-full max-w-2xl landscape:max-sm:flex landscape:max-sm:justify-end landscape:max-sm:pr-4 landscape:max-sm:max-w-none">
+      {/* 3. Game Board: Takes up remaining space in landscape, max width limited */}
+      <div className="w-full max-w-[500px] landscape:max-w-[min(100vh-4rem,600px)] aspect-square shrink-0 z-10">
         <div 
-          className="relative w-full aspect-square landscape:max-sm:h-[92vh] landscape:max-sm:w-[92vh] bg-slate-200/80 p-2 rounded-3xl shadow-xl flex items-center justify-center touch-none overflow-hidden border-4 border-slate-200 mx-auto landscape:max-sm:mx-0"
+          className="relative w-full h-full bg-slate-900/60 p-3 sm:p-4 rounded-3xl sm:rounded-[2.5rem] shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/10 flex items-center justify-center touch-none overflow-hidden backdrop-blur-md"
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
+          {/* Inner Glow effect */}
+          <div className="absolute inset-0 rounded-[2.5rem] shadow-[inset_0_0_20px_rgba(0,0,0,0.8)] pointer-events-none"></div>
+
           {/* Grid Background */}
-          <div className="grid grid-cols-4 grid-rows-4 w-full h-full">
+          <div className="grid grid-cols-4 grid-rows-4 w-full h-full gap-2 sm:gap-3">
             {Array.from({ length: 16 }).map((_, i) => (
-              <div key={i} className="p-1 sm:p-2 w-full h-full">
-                <div className="bg-slate-300/40 rounded-lg sm:rounded-2xl w-full h-full" />
+              <div key={i} className="w-full h-full">
+                <div className="bg-slate-950/80 rounded-xl sm:rounded-2xl w-full h-full shadow-[inset_0_2px_10px_rgba(0,0,0,0.8)] border border-white/5" />
               </div>
             ))}
           </div>
 
           {/* Tiles */}
-          <div className="absolute inset-0 p-2">
+          <div className="absolute inset-0 p-3 sm:p-4 pointer-events-none">
             <AnimatePresence>
               {grid.flat().filter(Boolean).map((tile) => (
                 <motion.div
@@ -448,19 +413,21 @@ export default function App() {
                   animate={{ 
                     scale: 1, 
                     opacity: 1,
-                    left: `${tile!.position[1] * 25}%`,
-                    top: `${tile!.position[0] * 25}%`,
+                    left: `calc(${tile!.position[1] * 25}% + 0.75rem)`, // Accounting for padding
+                    top: `calc(${tile!.position[0] * 25}% + 0.75rem)`,
+                    width: 'calc(25% - 1.5rem)',
+                    height: 'calc(25% - 1.5rem)'
                   }}
                   exit={{ scale: 0, opacity: 0 }}
                   transition={{ 
                     type: 'spring', 
-                    stiffness: 500, 
-                    damping: 45,
+                    stiffness: 400, 
+                    damping: 30,
                     mass: 0.8 
                   }}
-                  className="absolute w-1/4 h-1/4 p-1 sm:p-2"
+                  className="absolute"
                 >
-                  <div className={`w-full h-full rounded-lg sm:rounded-2xl flex items-center justify-center font-black text-2xl sm:text-5xl transition-colors duration-200 shadow-md ${getTileColor(tile!.value)}`}>
+                  <div className={`w-full h-full rounded-xl sm:rounded-2xl flex items-center justify-center font-black text-3xl sm:text-5xl transition-colors duration-200 ${getTileColor(tile!.value)}`}>
                     {tile!.value}
                   </div>
                 </motion.div>
@@ -473,52 +440,53 @@ export default function App() {
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="absolute inset-0 z-20 bg-slate-900/40 backdrop-blur-md rounded-[2.5rem] flex flex-col items-center justify-center text-center p-8"
+              className="absolute inset-0 z-20 bg-slate-950/80 backdrop-blur-lg rounded-3xl sm:rounded-[2.5rem] flex flex-col items-center justify-center text-center p-8"
             >
               <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 0.2 }}
-                className="bg-white p-10 rounded-[3rem] shadow-2xl border-4 border-emerald-500 max-w-xs w-full"
+                initial={{ scale: 0.8, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, type: 'spring', bounce: 0.5 }}
+                className="bg-slate-900/90 p-10 rounded-[2.5rem] shadow-[0_0_50px_rgba(0,0,0,1)] border border-white/10 max-w-sm w-full relative overflow-hidden"
               >
+                {/* Glow behind modal */}
+                <div className={`absolute inset-0 opacity-20 blur-3xl ${gameStatus === 'WON' ? 'bg-indigo-500' : 'bg-slate-500'}`}></div>
+
                 {gameStatus === 'WON' ? (
-                  <>
-                    <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                      <Crown size={48} className="text-amber-500 animate-bounce" />
+                  <div className="relative z-10">
+                    <div className="w-24 h-24 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_rgba(99,102,241,0.5)]">
+                      <Crown size={48} className="text-white animate-bounce" />
                     </div>
-                    <h2 className="text-4xl font-black text-slate-900 mb-2">VICTORY!</h2>
-                    <p className="text-slate-500 mb-8 font-bold">2048 Reached!</p>
-                  </>
+                    <h2 className="text-4xl sm:text-5xl font-black text-white mb-2 tracking-tight">VICTORY!</h2>
+                    <p className="text-indigo-300 mb-8 font-bold text-lg">2048 Reached!</p>
+                  </div>
                 ) : (
-                  <>
-                    <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                      <Trophy size={48} className="text-slate-400 opacity-50" />
+                  <div className="relative z-10">
+                    <div className="w-24 h-24 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner border border-white/5">
+                      <Trophy size={48} className="text-slate-500" />
                     </div>
-                    <h2 className="text-4xl font-black text-slate-900 mb-2">GG!</h2>
-                    <p className="text-slate-500 mb-8 font-bold text-xl">{score} points</p>
-                  </>
+                    <h2 className="text-4xl sm:text-5xl font-black text-white mb-2 tracking-tight">GAME OVER</h2>
+                    <p className="text-slate-400 mb-8 font-bold text-xl">{score} points</p>
+                  </div>
                 )}
                 <button 
                   onClick={initGame}
-                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-2xl font-black text-2xl transition-all shadow-lg active:scale-95"
+                  className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white px-8 py-4 rounded-2xl font-black text-2xl transition-all shadow-[0_0_20px_rgba(99,102,241,0.4)] hover:shadow-[0_0_30px_rgba(99,102,241,0.6)] active:scale-95 relative z-10"
                 >
-                  Again!
+                  Play Again
                 </button>
               </motion.div>
             </motion.div>
           )}
         </div>
       </div>
-
-      {/* 4. Footer Instructions (Hidden in Mobile Landscape) */}
-      <div className="mt-4 text-center text-slate-400 landscape:max-sm:hidden">
-        <p className="text-sm font-bold uppercase tracking-[0.2em]">How to Play</p>
-        <p className="text-slate-500 font-medium mt-1">
-          Use your <span className="text-emerald-600 font-bold">arrow keys</span> or <span className="text-emerald-600 font-bold">Swipe</span> to move tiles.
+      
+      {/* Portrait Mobile Footer Instructions */}
+      <div className="landscape:hidden text-center text-slate-500 w-full max-w-[500px]">
+        <p className="text-sm font-bold uppercase tracking-[0.2em] mb-1 text-slate-600">How to Play</p>
+        <p className="text-sm font-medium">
+          Use <span className="text-indigo-400 font-bold">arrow keys</span> or <span className="text-pink-400 font-bold">swipe</span> to move tiles.
         </p>
       </div>
     </div>
-
-
   );
 }
