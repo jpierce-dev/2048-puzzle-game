@@ -382,15 +382,16 @@ export default function App() {
           </div>
         </div>
 
-        <div className={`flex justify-between items-center ${currentTheme.panelBg} p-3 sm:p-4 rounded-2xl transition-colors duration-500`}>
-           <div className="flex gap-2 sm:gap-3">
-            <button 
-              onClick={initGame}
-              className={`flex items-center justify-center gap-2 px-4 sm:px-6 py-3 rounded-xl font-bold transition-all active:scale-95 ${currentTheme.btnPrimary}`}
-            >
-              <RefreshCw size={20} />
-              <span className="hidden sm:inline landscape:inline">Reset</span>
-            </button>
+        <div className={`flex items-center ${currentTheme.panelBg} p-3 sm:p-4 rounded-2xl transition-colors duration-500`}>
+          <button 
+            onClick={initGame}
+            className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold transition-all active:scale-95 ${currentTheme.btnPrimary}`}
+          >
+            <RefreshCw size={20} />
+            <span className="hidden sm:inline landscape:inline">Reset</span>
+          </button>
+          
+          <div className="flex gap-2 sm:gap-3 ml-2 sm:ml-3">
             <button 
               onClick={() => setIsMuted(!isMuted)}
               className={`p-3 flex items-center justify-center rounded-xl transition-all active:scale-95 ${currentTheme.btnSecondary}`}
@@ -405,14 +406,7 @@ export default function App() {
             >
               <Palette size={20} />
             </button>
-           </div>
-          
-           {/* Instructions (Hidden on very small screens, visible on desktop/landscape) */}
-           <div className="hidden sm:flex items-center gap-2 opacity-60 px-2">
-             <div className="flex gap-1">
-               <ArrowUp size={16} /> <ArrowDown size={16} /> <ArrowLeft size={16} /> <ArrowRight size={16} />
-             </div>
-           </div>
+          </div>
         </div>
         
         <div className="hidden landscape:block opacity-60 mt-2">
