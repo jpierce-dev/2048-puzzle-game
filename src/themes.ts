@@ -40,9 +40,9 @@ export const themes: Record<ThemeId, ThemeConfig> = {
     iconColors: 'text-emerald-500',
     getTileStyle: (value: number) => {
       const colors: Record<number, string> = {
-        2: 'bg-emerald-50 text-emerald-900',
-        4: 'bg-emerald-100 text-emerald-900',
-        8: 'bg-emerald-200 text-emerald-900 shadow-sm',
+        2: 'bg-emerald-50 text-emerald-900 shadow-sm border border-emerald-100/50',
+        4: 'bg-emerald-100 text-emerald-900 shadow-sm border border-emerald-200/50',
+        8: 'bg-emerald-200 text-emerald-900 shadow-sm border border-emerald-300/50',
         16: 'bg-emerald-300 text-emerald-900 shadow-md',
         32: 'bg-emerald-400 text-white shadow-md',
         64: 'bg-emerald-500 text-white shadow-lg',
@@ -74,9 +74,9 @@ export const themes: Record<ThemeId, ThemeConfig> = {
     iconColors: 'text-cyan-400',
     getTileStyle: (value: number) => {
       const colors: Record<number, string> = {
-        2: 'bg-slate-700 text-slate-300',
-        4: 'bg-slate-600 text-slate-200',
-        8: 'bg-sky-900 text-sky-100',
+        2: 'bg-slate-700 text-slate-300 shadow-sm border border-slate-600/50',
+        4: 'bg-slate-600 text-slate-200 shadow-sm border border-slate-500/50',
+        8: 'bg-sky-900 text-sky-100 shadow-md border border-sky-800/50',
         16: 'bg-sky-700 text-white shadow-lg shadow-sky-900/50',
         32: 'bg-blue-600 text-white shadow-lg shadow-blue-900/50',
         64: 'bg-blue-500 text-white shadow-lg shadow-blue-800/50',
@@ -108,9 +108,9 @@ export const themes: Record<ThemeId, ThemeConfig> = {
     iconColors: 'text-orange-500',
     getTileStyle: (value: number) => {
       const colors: Record<number, string> = {
-        2: 'bg-orange-100 text-orange-900',
-        4: 'bg-orange-200 text-orange-900',
-        8: 'bg-orange-300 text-orange-900',
+        2: 'bg-orange-50 text-orange-900 shadow-sm border border-orange-200/50',
+        4: 'bg-orange-100 text-orange-900 shadow-sm border border-orange-300/50',
+        8: 'bg-orange-200 text-orange-900 shadow-sm border border-orange-400/50',
         16: 'bg-orange-400 text-white shadow-md',
         32: 'bg-orange-500 text-white shadow-md',
         64: 'bg-red-500 text-white shadow-lg',
