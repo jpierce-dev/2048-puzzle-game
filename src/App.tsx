@@ -430,44 +430,46 @@ export default function App() {
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
-          {/* Grid Background */}
-          <div className="grid grid-cols-4 grid-rows-4 w-full h-full">
-            {Array.from({ length: 16 }).map((_, i) => (
-              <div key={i} className="w-full h-full p-1.5 sm:p-2">
-                <div className={`w-full h-full rounded-xl sm:rounded-2xl transition-colors duration-500 ${currentTheme.emptyCell}`} />
-              </div>
-            ))}
-          </div>
-
-          {/* Tiles */}
-          <div className="absolute inset-0 p-3 sm:p-4 pointer-events-none">
-            <AnimatePresence>
-              {grid.flat().filter(Boolean).map((tile) => (
-                <motion.div
-                  key={tile!.id}
-                  layoutId={`tile-${tile!.id}`}
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ 
-                    scale: 1, 
-                    opacity: 1,
-                    left: `${tile!.position[1] * 25}%`,
-                    top: `${tile!.position[0] * 25}%`,
-                  }}
-                  exit={{ scale: 0, opacity: 0 }}
-                  transition={{ 
-                    type: 'spring', 
-                    stiffness: 400, 
-                    damping: 30,
-                    mass: 0.8 
-                  }}
-                  className="absolute w-1/4 h-1/4 p-1.5 sm:p-2"
-                >
-                  <div className={`w-full h-full rounded-xl sm:rounded-2xl flex items-center justify-center font-black text-3xl sm:text-5xl transition-all duration-300 ${currentTheme.getTileStyle(tile!.value)}`}>
-                    {tile!.value}
-                  </div>
-                </motion.div>
+          <div className="relative w-full h-full">
+            {/* Grid Background */}
+            <div className="grid grid-cols-4 grid-rows-4 w-full h-full">
+              {Array.from({ length: 16 }).map((_, i) => (
+                <div key={i} className="w-full h-full p-1.5 sm:p-2">
+                  <div className={`w-full h-full rounded-xl sm:rounded-2xl transition-colors duration-500 ${currentTheme.emptyCell}`} />
+                </div>
               ))}
-            </AnimatePresence>
+            </div>
+
+            {/* Tiles */}
+            <div className="absolute inset-0 pointer-events-none">
+              <AnimatePresence>
+                {grid.flat().filter(Boolean).map((tile) => (
+                  <motion.div
+                    key={tile!.id}
+                    layoutId={`tile-${tile!.id}`}
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ 
+                      scale: 1, 
+                      opacity: 1,
+                      left: `${tile!.position[1] * 25}%`,
+                      top: `${tile!.position[0] * 25}%`,
+                    }}
+                    exit={{ scale: 0, opacity: 0 }}
+                    transition={{ 
+                      type: 'spring', 
+                      stiffness: 400, 
+                      damping: 30,
+                      mass: 0.8 
+                    }}
+                    className="absolute w-1/4 h-1/4 p-1.5 sm:p-2"
+                  >
+                    <div className={`w-full h-full rounded-xl sm:rounded-2xl flex items-center justify-center font-black text-3xl sm:text-5xl transition-all duration-300 ${currentTheme.getTileStyle(tile!.value)}`}>
+                      {tile!.value}
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
           </div>
 
           {/* Overlays */}
