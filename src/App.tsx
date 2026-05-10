@@ -431,9 +431,9 @@ export default function App() {
           onTouchEnd={handleTouchEnd}
         >
           {/* Grid Background */}
-          <div className="grid grid-cols-4 grid-rows-4 w-full h-full gap-2 sm:gap-3">
+          <div className="grid grid-cols-4 grid-rows-4 w-full h-full">
             {Array.from({ length: 16 }).map((_, i) => (
-              <div key={i} className="w-full h-full">
+              <div key={i} className="w-full h-full p-1.5 sm:p-2">
                 <div className={`w-full h-full rounded-xl sm:rounded-2xl transition-colors duration-500 ${currentTheme.emptyCell}`} />
               </div>
             ))}
@@ -450,10 +450,8 @@ export default function App() {
                   animate={{ 
                     scale: 1, 
                     opacity: 1,
-                    left: `calc(${tile!.position[1] * 25}% + 0.75rem)`,
-                    top: `calc(${tile!.position[0] * 25}% + 0.75rem)`,
-                    width: 'calc(25% - 1.5rem)',
-                    height: 'calc(25% - 1.5rem)'
+                    left: `${tile!.position[1] * 25}%`,
+                    top: `${tile!.position[0] * 25}%`,
                   }}
                   exit={{ scale: 0, opacity: 0 }}
                   transition={{ 
@@ -462,7 +460,7 @@ export default function App() {
                     damping: 30,
                     mass: 0.8 
                   }}
-                  className="absolute"
+                  className="absolute w-1/4 h-1/4 p-1.5 sm:p-2"
                 >
                   <div className={`w-full h-full rounded-xl sm:rounded-2xl flex items-center justify-center font-black text-3xl sm:text-5xl transition-all duration-300 ${currentTheme.getTileStyle(tile!.value)}`}>
                     {tile!.value}
