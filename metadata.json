@@ -1,0 +1,6 @@
+{
+  "name": "2048 Puzzle Game",
+  "description": "A fun and addictive numbers puzzle game. Merge the tiles to reach the 2048 tile!",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
