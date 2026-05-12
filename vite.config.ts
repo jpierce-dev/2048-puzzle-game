@@ -6,7 +6,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig(({mode}) => {
   return {
-    base: './',
+    base: '/2048-puzzle-game/',
     plugins: [
       react(), 
       tailwindcss(),
@@ -22,9 +22,9 @@ export default defineConfig(({mode}) => {
           theme_color: '#10b981',
           background_color: '#f8fafc',
           display: 'standalone',
-          start_url: './',
-          scope: './',
-          id: '/',
+          start_url: '/2048-puzzle-game/',
+          scope: '/2048-puzzle-game/',
+          id: '/2048-puzzle-game/',
           icons: [
             {
               src: 'icon-192.png',
