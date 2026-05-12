@@ -12,6 +12,9 @@ export default defineConfig(({mode}) => {
       tailwindcss(),
       VitePWA({
         registerType: 'autoUpdate',
+        devOptions: {
+          enabled: true
+        },
         manifest: {
           name: '2048 Puzzle Game',
           short_name: '2048',
@@ -19,12 +22,25 @@ export default defineConfig(({mode}) => {
           theme_color: '#10b981',
           background_color: '#f8fafc',
           display: 'standalone',
+          start_url: './',
+          scope: './',
+          id: '/',
           icons: [
             {
-              src: 'icon.png',
+              src: 'icon-192.png',
+              sizes: '192x192',
+              type: 'image/png'
+            },
+            {
+              src: 'icon-512.png',
+              sizes: '512x512',
+              type: 'image/png'
+            },
+            {
+              src: 'icon-512.png',
               sizes: '512x512',
               type: 'image/png',
-              purpose: 'any maskable'
+              purpose: 'maskable'
             }
           ]
         }
